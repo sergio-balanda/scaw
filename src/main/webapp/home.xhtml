@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:a="http://xmlns.jcp.org/jsf/passthrough">
+<h:head>
+	<title>Home</title>
+	<ui:include src="partials/head.xhtml"></ui:include>
+</h:head>
+
+<h:body class="bg-light">
+	<f:metadata>
+		<f:event type="preRenderView"
+			listener="#{usuarioBean.verificarSesion}" />
+	</f:metadata>
+	<ui:include src="partials/nav.xhtml" />
+
+	<div class="container">
+		<div class="row mt-5">
+			<div class="col-md-10 offset-md-1">
+				<div class="card">
+					<div class="card-body">
+						<h1 class="card-title">Bienvenido</h1>
+						<div class="row">
+							<div class="col-md-6">
+								<p class="text-muted">Modificar texto o password</p>
+
+								<h:form id="myForm">
+
+									<div class="form-group">
+										<label for="email">Email: </label>
+										<h:inputText value="#{usuarioBean.email}" id="email"
+											required="true" requiredMessage="Email requerido"
+											class="form-control" readonly="true"></h:inputText>
+
+									</div>
+
+									<div class="form-group">
+										<label for="texto">Texto</label>
+										<h:inputText value="#{usuarioBean.verUsuario().texto}"
+											id="texto" required="true" requiredMessage="Texto requerido"
+											name="texto" class="form-control"></h:inputText>
+
+									</div>
+
+									<div class="form-group">
+										<label for="checkbox">¿Desea cambiar su contraseña?</label>
+									</div>
+									<div class="form-group">
+										<h:inputSecret value="#{usuarioBean.verUsuario().password}"
+											a:placeholder="Password" class="form-control" id="password"
+											name="password" />
+									</div>
+
+
+									<div class="form-group">
+										<h:commandButton styleClass="btn btn-primary"
+											value="Modificar" action="#{usuarioBean.modificarUsuario}"></h:commandButton>
+									</div>
+
+								</h:form>
+							</div>
+							<div class="col-md-6 text-center">
+								<p>Ver Historial de actividades.</p>
+								<h:form>
+									<h:commandLink id="historial"
+											action="#{auditoriaBean.historial}" value="Historial"
+											class="btn btn-lg btn-success">
+											<f:param name="rol" value="#{sessionScope.rol}"></f:param>
+										</h:commandLink>
+								</h:form>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</h:body>
+</html>
