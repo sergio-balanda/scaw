@@ -109,7 +109,10 @@ public class UsuarioBean implements Serializable {
 
 	// guarda usuarios con rol usuario
 	public String guardarUsuario() {
-		Usuario nuevoUsuario = UsuarioBean();
+		Usuario nuevoUsuario = new Usuario();
+		nuevoUsuario.setPassword(password);
+		nuevoUsuario.setEmail(email);
+		
 		if(usuarioService.validaUsuarioEmail(nuevoUsuario)==true && usuarioService.validaUsuarioPassword(nuevoUsuario)==true) {
 			error=null;
 			usuarioService.guardarUsuario(nuevoUsuario);

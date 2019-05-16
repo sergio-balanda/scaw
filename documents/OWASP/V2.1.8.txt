@@ -1,0 +1,4 @@
+Verifique que se proporcione un medidor de seguridad de contraseña para ayudar a los usuarios a establecer un contraseña más fuerte.
+
+
+Se aplica, tanto el cambio de contraseña y la modificacion de la misma utilizan un medidor. Se cuenta con un archivo medidor.js el cual verifica que la contraseña ingresada tenga letras, numeros, mayusculas, minusculas y largo de caracteres, devolviendo un valor en porcentajes siendo el 100% una contraseña segura.

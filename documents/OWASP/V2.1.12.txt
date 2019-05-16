@@ -1,0 +1,4 @@
+Verifique que el usuario pueda elegir entre ver temporalmente toda la contraseña enmascarada o ver temporalmente el último carácter escrito de la contraseña en plataformas que no tienen esta funcionalidad nativa.
+
+
+Se verifica, se permite mostrar la contraseña con un checkbox, mediante un archivo javascript.

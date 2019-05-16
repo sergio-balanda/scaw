@@ -1,0 +1,4 @@
+Verifique que la funcionalidad de "pegar", los ayudantes de contraseñas del navegador y los administradores de contraseñas externas estén permitidos.
+
+
+Se verifica, los administradores de contraseñas y pegar estan permitidos.

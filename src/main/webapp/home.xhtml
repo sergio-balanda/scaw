@@ -63,15 +63,18 @@
 										<label for="checkbox">Password nuevo.</label>
 										<h:inputSecret value="#{usuarioBean.passwordNuevo}"
 											a:placeholder="Nuevo Password" class="form-control" id="passwordNuevo"
-											name="passwordNuevo" />
+											name="passwordNuevo" onkeyup="muestra_seguridad_clave(this.value, this.form); show(this.value)"/>
+										<input type="checkbox" onclick="Toggle()"/> Ver password
+										<input type="hidden" id="myText" class="form-control" readonly="readonly"></input>
 									</div>
 
-
+									<div class="form-group">
+										<span class="text-muted">Seguridad: </span> <input name="seguridad" type="text" style="border: 0px; background-color:ffffff; text-decoration:italic;" onfocus="blur()" class="text-success"/>
+									</div>
 									<div class="form-group">
 										<h:commandButton styleClass="btn btn-primary"
 											value="Modificar" action="#{usuarioBean.modificarUsuario}"></h:commandButton>
 									</div>
-
 								</h:form>
 							</div>
 							<div class="col-md-6 text-center">
@@ -90,6 +93,7 @@
 			</div>
 		</div>
 	</div>
-
+	<script src="./js/medidor.js"></script>
+	<script src="./js/mostrar-ocultar.js"></script>
 </h:body>
 </html>

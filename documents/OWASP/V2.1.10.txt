@@ -1,0 +1,4 @@
+Verifique que no haya requisitos periódicos de rotación de credenciales o historial de contraseñas.
+
+
+Se verifica, no hay rotacion periodica de contraseñas.

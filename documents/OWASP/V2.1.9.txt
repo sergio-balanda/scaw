@@ -1,0 +1,4 @@
+Verifique que no haya reglas de composición de contraseñas que limiten el tipo de caracteres permitidos. No debe haber ningún requisito para mayúsculas, minúsculas, números o caracteres especiales.
+
+
+Se verifica, no hay reglas que limiten el uso de mayusculas, minusculas, numeros y caracteres.

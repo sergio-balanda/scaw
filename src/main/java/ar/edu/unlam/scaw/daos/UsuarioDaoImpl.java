@@ -85,8 +85,6 @@ public class UsuarioDaoImpl implements UsuarioDao {
 	public void guardarUsuario(Usuario usuario) {
 		try {
 			this.HSQLDBMain();
-			usuario.setEstado("habilitado");
-			usuario.setTexto("");
 			statement.executeUpdate("INSERT INTO USUARIO (EMAIL,PASSWORD,TEXTO,ESTADO,ROL) VALUES ('"+usuario.getEmail()+"', '"+usuario.getPassword()+"','','habilitado',2)");
 		} catch (SQLException e) {
 			e.printStackTrace();

@@ -133,8 +133,8 @@ public class UsuarioServiceImpl implements UsuarioService {
 			}
 			else {
 				// El correo gmail de envío
-				String correoEnvia = "***************";
-				String claveCorreo = "***************";
+				String correoEnvia = "tp.tres.empanadas@gmail.com";
+				String claveCorreo = "programacionweb3";
 				// La configuración para enviar correo
 				Properties properties = new Properties();
 				properties.put("mail.smtp.host", "smtp.gmail.com");
