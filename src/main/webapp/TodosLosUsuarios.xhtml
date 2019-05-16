@@ -10,12 +10,13 @@
 	<title>Lista de Usuarios</title>
 	<ui:include src="partials/head.xhtml"></ui:include>
 </h:head>
+
 <h:body class="bg-light">
 	<f:metadata>
 		<f:event type="preRenderView" listener="#{usuarioBean.verificarSesion}" />
 		<f:event type="preRenderView" listener="#{usuarioBean.verificarRol}" /> 
 	</f:metadata>
-	
+
 	<ui:include src="partials/nav.xhtml" />
 	<div class="container">
 		<div class="row">

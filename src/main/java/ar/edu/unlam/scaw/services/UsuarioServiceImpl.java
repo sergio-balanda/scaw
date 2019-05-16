@@ -28,9 +28,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 
 	@Autowired
 	UsuarioDao usuarioDao;
-
-	// UsuarioDaoImpl usuarioDao = new UsuarioDaoImpl();
-
+	
 	@Override
 	public List<Usuario> getUsuarios() {
 		return usuarioDao.getUsuarios();
@@ -92,16 +90,28 @@ public class UsuarioServiceImpl implements UsuarioService {
 	}
 
 	@Override
-	public void usuarioModificaPasswordyTexto(String texto, String password, Integer id) {
+	public String usuarioModificaPasswordyTexto(String texto, String passwordViejo,String passwordNuevo, Integer id) {
 		// TODO Auto-generated method stub
 		Usuario usuario = buscarUsuarioPorId(id);
-		if (password != "") {
-			usuarioModificacion(id, usuario.getEmail(), texto, usuario.getEstado(), password, usuario.getRol());
-		} else {
-			usuarioModificacion(id, usuario.getEmail(), texto, usuario.getEstado(), usuario.getPassword(),
-					usuario.getRol());
-		}
 
+		if (passwordNuevo != "") {//si el password no es nulo
+			Usuario usuarioValidaPass = new Usuario();
+			usuarioValidaPass.setPassword(passwordNuevo);
+			if(this.validaUsuarioPassword(usuarioValidaPass)==true) {//se valida pass nuevo si es true
+				Usuario usuarioDePassActual = new Usuario();
+				usuarioDePassActual.setPassword(passwordViejo);
+				if(usuario.getPassword().equals(usuarioDePassActual.getPassword())) {//si el pass actual es igual al pass de db
+					usuarioModificacion(id, usuario.getEmail(), texto, usuario.getEstado(), passwordNuevo, usuario.getRol());
+					return "Campos modificados correctamente.";
+				}else {//si los pass actual y db no son iguales
+					return "Campo password actual no coincide.";
+				}
+			}else {//pass validacion false
+				return "Campo password nuevo no valido.";
+			}
+		} 
+		usuarioModificacion(id, usuario.getEmail(), texto, usuario.getEstado(), usuario.getPassword(), usuario.getRol());
+		return "Campo texto modificado con exito.";
 	}
 	
 	public Usuario buscarUsuarioPorEmail(String email) {
@@ -123,8 +133,8 @@ public class UsuarioServiceImpl implements UsuarioService {
 			}
 			else {
 				// El correo gmail de envío
-				String correoEnvia = "***********";
-				String claveCorreo = "************";
+				String correoEnvia = "***************";
+				String claveCorreo = "***************";
 				// La configuración para enviar correo
 				Properties properties = new Properties();
 				properties.put("mail.smtp.host", "smtp.gmail.com");
@@ -202,7 +212,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 
 	@Override
 	public boolean validaUsuarioPassword(Usuario usuario) {
-		if(usuario.getPassword().length()<2) {
+		if(usuario.getPassword().length()<12 || usuario.getPassword().length()>80) {
 			return false;
 		}else {
 			return true;

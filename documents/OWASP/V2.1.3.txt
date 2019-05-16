@@ -1,0 +1,4 @@
+Verifique que las contraseñas puedan contener espacios y no se realice el truncamiento.
+
+
+Se verifica, las contraseñas pueden tener espacios en blanco los espacios no son truncados.

@@ -34,6 +34,7 @@ public class UsuarioBean implements Serializable {
 	private Integer id = null;
 	private String email = null;
 	private String password = null;
+	private String passwordNuevo = null;
 	private String texto = null;
 	private String estado = null;
 	private Integer rol = null;
@@ -51,7 +52,7 @@ public class UsuarioBean implements Serializable {
 	// LOGIN
 	public String login() {
 		Usuario usuario = usuarioService.buscarUsuarioPorEmailyContraseña(this.email, this.password);
-		if (usuario == null) {
+		if (usuario == null ||  usuarioService.validaUsuarioPassword(usuario)==false  ) {
 			error = "Usuario no encontrado";
 			return "index";
 		} else {
@@ -132,11 +133,15 @@ public class UsuarioBean implements Serializable {
 		FacesContext con = FacesContext.getCurrentInstance();
 		HttpServletRequest request = (HttpServletRequest) con.getExternalContext().getRequest();
 		String cambioDeTexto = request.getParameter("myForm:texto");
-		String cambioDePassword = request.getParameter("myForm:password");
-		usuarioService.usuarioModificaPasswordyTexto(cambioDeTexto, cambioDePassword, intIdUsuario);
+		String passwordViejo = request.getParameter("myForm:password");
+		String passwordNuevo = request.getParameter("myForm:passwordNuevo");
+		System.out.println("***********************bean******************************");
+		System.out.println("password viejo "+passwordViejo);
+		error = usuarioService.usuarioModificaPasswordyTexto(cambioDeTexto, passwordViejo, passwordNuevo, intIdUsuario);
+
 		Usuario usuarioDb = usuarioService.buscarUsuarioPorId(intIdUsuario);
 		if (usuarioDb != null) {
-			String accion = "Usuario "+ usuarioDb.getEmail() + " realizo modificaciones en campo texto y password.";
+			String accion = "Usuario "+ usuarioDb.getEmail() + " realizo modificaciones.";
 			auditoriaService.registrarAuditoria(usuarioDb,accion);
 		}
 		return "home";
@@ -186,6 +191,7 @@ public class UsuarioBean implements Serializable {
 		super();
 		this.email = null;
 		this.password = null;
+		this.passwordNuevo = null;
 		this.texto = null;
 		this.estado = null;
 		this.rol = null;
@@ -196,6 +202,7 @@ public class UsuarioBean implements Serializable {
 		Usuario usuario = new Usuario();
 		usuario.setEmail(this.email);
 		usuario.setPassword(this.password);
+		usuario.setPassword(this.passwordNuevo);
 		usuario.setTexto(this.texto);
 		usuario.setEstado(this.estado);
 		usuario.setRol(this.rol);
@@ -267,4 +274,12 @@ public class UsuarioBean implements Serializable {
 		this.auditorias = auditorias;
 	}
 
+	public String getPasswordNuevo() {
+		return passwordNuevo;
+	}
+
+	public void setPasswordNuevo(String passwordNuevo) {
+		this.passwordNuevo = passwordNuevo;
+	}
+	
 }

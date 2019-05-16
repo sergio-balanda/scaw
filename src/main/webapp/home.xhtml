@@ -30,7 +30,9 @@
 								<p class="text-muted">Modificar texto o password</p>
 
 								<h:form id="myForm">
-
+									<div class="form-group">
+										<h:outputText value = "#{usuarioBean.error}" class="text-danger"/>
+									</div>
 									<div class="form-group">
 										<label for="email">Email: </label>
 										<h:inputText value="#{usuarioBean.email}" id="email"
@@ -48,12 +50,20 @@
 									</div>
 
 									<div class="form-group">
-										<label for="checkbox">¿Desea cambiar su contraseña?</label>
+										<label for="checkbox">¿Desea cambiar su Password?</label>
+										<p class="text-muted">Para cambiar su password ingrese su actual password seguido del nuevo.</p>
 									</div>
 									<div class="form-group">
+										<label for="checkbox">Password actual.</label>
 										<h:inputSecret value="#{usuarioBean.verUsuario().password}"
 											a:placeholder="Password" class="form-control" id="password"
 											name="password" />
+									</div>
+									<div class="form-group">
+										<label for="checkbox">Password nuevo.</label>
+										<h:inputSecret value="#{usuarioBean.passwordNuevo}"
+											a:placeholder="Nuevo Password" class="form-control" id="passwordNuevo"
+											name="passwordNuevo" />
 									</div>
 
 

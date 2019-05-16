@@ -1,0 +1,4 @@
+Verifique que las contraseñas establecidas por el usuario tengan al menos 12 caracteres de longitud.
+
+
+Se verifica, se crea un metodo el cual valida el password de los usuarios al loguarse, registrarse y modificarse. En servicio se encuentra en UsuarioServiceImpl metodo validaUsuarioPassword, valida que el password del usuario sea mayor o igual a 12 caracteres.

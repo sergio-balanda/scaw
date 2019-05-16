@@ -1,0 +1,4 @@
+Verifique que las contraseñas de 64 caracteres o más estén permitidas.
+
+
+Se verifica, Las contraseñas de mas de 64 caracteres estan permitidas. La base de datos permite 80 caracteres, ademas el servicio UsuarioServiceImpl metodo validaUsuarioPassword, valida que el password no sea mayor a 80 caracteres.

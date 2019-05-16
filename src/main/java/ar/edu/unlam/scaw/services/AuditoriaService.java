@@ -14,4 +14,5 @@ public interface AuditoriaService {
 	List<Auditoria> auditoriasDeUnUsuario(Integer id);
 
 	void registrarAuditoria(Usuario usuario, String accion);
+
 }

@@ -13,7 +13,7 @@ public class Usuario implements Serializable, Comparable<Usuario> {
 	private String estado;
 	private Integer rol;
 	private List<Auditoria> auditorias;
-	
+
 	public Usuario() {
 
 	}

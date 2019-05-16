@@ -1,0 +1,4 @@
+Verifique que los usuarios puedan cambiar su contraseña.
+
+
+Se verifica los usuarios pueden cambiar sus contraseñas si así lo desean una vez logueados.

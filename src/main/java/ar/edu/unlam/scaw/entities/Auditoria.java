@@ -3,6 +3,7 @@ package ar.edu.unlam.scaw.entities;
 import java.io.Serializable;
 
 public class Auditoria {
+
 	private static final long serialVersionUID = 1L;
 	private Integer id;
 	private String accion;

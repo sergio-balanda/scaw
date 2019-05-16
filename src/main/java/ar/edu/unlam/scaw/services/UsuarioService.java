@@ -20,7 +20,7 @@ public interface UsuarioService {
 
 	Usuario cambiarEstado(Usuario usuario);
 
-	void usuarioModificaPasswordyTexto(String texto, String password, Integer id);
+	String usuarioModificaPasswordyTexto(String texto, String password, String passwordNuevo,Integer id);
 	
 	String enviarEmail(String email);
 
