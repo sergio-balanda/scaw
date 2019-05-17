@@ -1,5 +1,9 @@
 package ar.edu.unlam.scaw.services;
 
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.List;
 import java.util.Properties;
 
@@ -48,6 +52,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 
 	@Override
 	public void guardarUsuario(Usuario usuario) {
+		usuario.setPassword(this.md5(usuario.getPassword()));
 		usuarioDao.guardarUsuario(usuario);
 	}
 
@@ -74,7 +79,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 	public Usuario buscarUsuarioPorEmailyContraseña(String email, String password) {
 		//System.out.println("email y pass del servicio "+email + " "+password);
 		try {
-			Usuario usuario = usuarioDao.buscarUsuarioPorEmailyContraseña(email, password);
+			Usuario usuario = usuarioDao.buscarUsuarioPorEmailyContraseña(email, this.md5(password));
 			Usuario usuarioEquals = new Usuario();
 			usuarioEquals.setEstado("habilitado");
 			if (usuario.getId() !=null && usuarioEquals.getEstado().equals(usuario.getEstado())) {
@@ -99,9 +104,9 @@ public class UsuarioServiceImpl implements UsuarioService {
 			usuarioValidaPass.setPassword(passwordNuevo);
 			if(this.validaUsuarioPassword(usuarioValidaPass)==true) {//se valida pass nuevo si es true
 				Usuario usuarioDePassActual = new Usuario();
-				usuarioDePassActual.setPassword(passwordViejo);
+				usuarioDePassActual.setPassword(this.md5(passwordViejo));
 				if(usuario.getPassword().equals(usuarioDePassActual.getPassword())) {//si el pass actual es igual al pass de db
-					usuarioModificacion(id, usuario.getEmail(), texto, usuario.getEstado(), passwordNuevo, usuario.getRol());
+					usuarioModificacion(id, usuario.getEmail(), texto, usuario.getEstado(), this.md5(passwordNuevo), usuario.getRol());
 					return "Campos modificados correctamente.";
 				}else {//si los pass actual y db no son iguales
 					return "Campo password actual no coincide.";
@@ -218,5 +223,37 @@ public class UsuarioServiceImpl implements UsuarioService {
 			return true;
 		}
 	}
+	
+	public String md5(String password) {
+		
+		String md5 = null;
+		String input = password;
+		if(null == input) return null;
+		
+		try {
+			
+		//Create MessageDigest object for MD5
+		MessageDigest digest = MessageDigest.getInstance("MD5");
+		
+		  SecureRandom random = new SecureRandom();
+          byte[] salt = new byte[16];
+          random.nextBytes(salt);
 
+          // Passing the salt to the digest for the computation
+          digest.update(salt);
+		
+		
+		//Update input string in message digest
+		digest.update(input.getBytes(), 0, input.length());
+
+		//Converts message digest value in base 16 (hex) 
+		md5 = new BigInteger(1, digest.digest()).toString(16);
+
+		} catch (NoSuchAlgorithmException e) {
+
+			e.printStackTrace();
+		}
+		return md5;
+	}
+	
 }

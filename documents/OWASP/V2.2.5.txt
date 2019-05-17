@@ -1,0 +1,4 @@
+Verifique que cuando un proveedor de servicios de credenciales (CSP) y la autenticación de verificación de la aplicación están separados, se establece un TLS mutuamente autenticado entre los dos puntos finales.
+
+
+No verifica, no se utiliza tls.

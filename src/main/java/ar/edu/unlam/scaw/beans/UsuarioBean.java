@@ -138,8 +138,7 @@ public class UsuarioBean implements Serializable {
 		String cambioDeTexto = request.getParameter("myForm:texto");
 		String passwordViejo = request.getParameter("myForm:password");
 		String passwordNuevo = request.getParameter("myForm:passwordNuevo");
-		System.out.println("***********************bean******************************");
-		System.out.println("password viejo "+passwordViejo);
+
 		error = usuarioService.usuarioModificaPasswordyTexto(cambioDeTexto, passwordViejo, passwordNuevo, intIdUsuario);
 
 		Usuario usuarioDb = usuarioService.buscarUsuarioPorId(intIdUsuario);

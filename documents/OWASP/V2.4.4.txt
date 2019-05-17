@@ -1,0 +1,4 @@
+Verifique que si se usa bcrypt, el factor de trabajo DEBE ser tan grande como lo permita el rendimiento del servidor de verificación, generalmente al menos 13.
+
+
+No verifica, no se utiliza brypt.

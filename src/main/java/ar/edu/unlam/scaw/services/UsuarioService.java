@@ -27,5 +27,6 @@ public interface UsuarioService {
 	public boolean validaUsuarioEmail(Usuario usuario);
 	
 	public boolean validaUsuarioPassword(Usuario usuario);
-
+	
+	String md5(String password);
 }

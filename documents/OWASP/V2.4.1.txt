@@ -1,0 +1,3 @@
+Verifique que las contraseñas se almacenen en una forma que sea resistente a los ataques sin conexión. Las contraseñas DEBEN incluirse con sal y hacer hash utilizando una derivación de clave aprobada o una función de hashing de contraseña.
+
+Se verifica, las contraseñas son almacenadas con hash.Se utiliza el servicio UsuarioServiceImpl con su metodo md5, el cual recibe el password, teniendo en su salida un hash con el algoritmo criptográfico MD5.

@@ -11,7 +11,6 @@
 	<title>Historial</title>
 	<ui:include src="partials/head.xhtml"></ui:include>
 </h:head>
-
 <h:body class="bg-light">
 	<f:metadata>
 		<f:event type="preRenderView"
@@ -43,12 +42,6 @@
 										<f:facet name="header">Creado</f:facet>
 										<!-- row record -->
 					    				#{auditoria.creado}
-					    			</h:column>
-									<h:column>
-										<!-- column header -->
-										<f:facet name="header">Actualizado</f:facet>
-										<!-- row record -->
-					    				#{auditoria.actualizado}
 					    			</h:column>
 									<h:column>
 										<!-- column header -->

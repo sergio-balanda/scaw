@@ -1,0 +1,4 @@
+Verifique que si se usa PBKDF2, el recuento de iteraciones DEBE ser tan grande como lo permita el rendimiento del servidor de verificación, por lo general, al menos 100,000 iteraciones.
+
+
+No se verifica, no se utiliza PBKDF2.
