@@ -1,0 +1,3 @@
+Verifique que la aplicación tenga defensas contra los ataques de contaminación de parámetros HTTP, especialmente si el marco de la aplicación no hace distinciones sobre la fuente de los parámetros de solicitud (GET, POST, cookies, encabezados o variables de entorno).
+
+Si cumple, maneja los formularios mediante peticiones POST.
