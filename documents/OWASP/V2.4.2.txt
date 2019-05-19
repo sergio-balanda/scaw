@@ -1,4 +1,4 @@
 Verifique que la sal tenga una longitud de al menos 32 bits y se elija arbitrariamente para minimizar las colisiones de valores de sal entre los hashes almacenados. Para cada credencial, se DEBE almacenar un valor de sal único y el hash resultante.
 
 
-Se verifica, las contraseñas son almacenadas con hash.Se utiliza el servicio UsuarioServiceImpl con su metodo md5,se utiliza un salt con un random.
+Se verifica, las contraseñas son almacenadas con hash.Se utiliza el servicio UsuarioServiceImpl con su metodo md5,se utiliza una llave para desenciptar datos.

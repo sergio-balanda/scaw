@@ -28,5 +28,7 @@ public interface UsuarioService {
 	
 	public boolean validaUsuarioPassword(Usuario usuario);
 	
+	boolean validarNoCaracteresEspeciales(String texto);
+	
 	String md5(String password);
 }

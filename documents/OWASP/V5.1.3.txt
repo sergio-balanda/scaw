@@ -1,0 +1,3 @@
+Verifique que todas las entradas (campos de formulario HTML, solicitudes REST, parámetros de URL, encabezados HTTP, cookies, archivos por lotes, fuentes RSS, etc.) se validen mediante validación positiva (listas blancas).
+
+Se verifican, se validan los campos de tipo input para email, contraseña y tipo texto mediante metodos con expresiones regulares.

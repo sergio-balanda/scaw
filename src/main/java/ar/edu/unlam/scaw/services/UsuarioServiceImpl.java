@@ -6,6 +6,11 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.List;
 import java.util.Properties;
+import java.util.Arrays;
+import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+import org.apache.commons.codec.binary.Base64;
 
 import javax.enterprise.inject.New;
 import javax.mail.Message;
@@ -52,7 +57,8 @@ public class UsuarioServiceImpl implements UsuarioService {
 
 	@Override
 	public void guardarUsuario(Usuario usuario) {
-		usuario.setPassword(this.md5(usuario.getPassword()));
+		String password = usuario.getPassword();
+		usuario.setPassword(this.md5(password));
 		usuarioDao.guardarUsuario(usuario);
 	}
 
@@ -98,7 +104,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 	public String usuarioModificaPasswordyTexto(String texto, String passwordViejo,String passwordNuevo, Integer id) {
 		// TODO Auto-generated method stub
 		Usuario usuario = buscarUsuarioPorId(id);
-
+			
 		if (passwordNuevo != "") {//si el password no es nulo
 			Usuario usuarioValidaPass = new Usuario();
 			usuarioValidaPass.setPassword(passwordNuevo);
@@ -138,8 +144,8 @@ public class UsuarioServiceImpl implements UsuarioService {
 			}
 			else {
 				// El correo gmail de envío
-				String correoEnvia = "******************";
-				String claveCorreo = "******************";
+				String correoEnvia = "***********";
+				String claveCorreo = "***********";;
 				// La configuración para enviar correo
 				Properties properties = new Properties();
 				properties.put("mail.smtp.host", "smtp.gmail.com");
@@ -224,36 +230,42 @@ public class UsuarioServiceImpl implements UsuarioService {
 		}
 	}
 	
-	public String md5(String password) {
-		
-		String md5 = null;
-		String input = password;
-		if(null == input) return null;
-		
-		try {
-			
-		//Create MessageDigest object for MD5
-		MessageDigest digest = MessageDigest.getInstance("MD5");
-		
-		  SecureRandom random = new SecureRandom();
-          byte[] salt = new byte[16];
-          random.nextBytes(salt);
-
-          // Passing the salt to the digest for the computation
-          digest.update(salt);
-		
-		
-		//Update input string in message digest
-		digest.update(input.getBytes(), 0, input.length());
-
-		//Converts message digest value in base 16 (hex) 
-		md5 = new BigInteger(1, digest.digest()).toString(16);
-
-		} catch (NoSuchAlgorithmException e) {
-
-			e.printStackTrace();
+	public boolean validarNoCaracteresEspeciales(String texto) {
+		Pattern TEXT_PATTERN = Pattern.compile("[$&+,:;=?@#|'<>.^*()%!-]");
+		Matcher mather = TEXT_PATTERN.matcher(texto);
+		if(!mather.find()){
+			return false;
 		}
-		return md5;
+		return true;
+	}
+	
+	public String md5(String password) {
+
+		String secretKey = "scaw";//llave para desenciptar datos
+		String passBase64 = "";
+		
+        try {
+ 
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            byte[] digestOfPassword = md.digest(secretKey.getBytes("utf-8"));
+            byte[] keyBytes = Arrays.copyOf(digestOfPassword, 24);
+            SecretKey key = new SecretKeySpec(keyBytes, "DESede");
+            
+            Cipher cipher = Cipher.getInstance("DESede");
+            cipher.init(Cipher.ENCRYPT_MODE, key);
+ 
+            byte[] plainTextBytes = password.getBytes("utf-8");
+            byte[] buf = cipher.doFinal(plainTextBytes);
+            byte[] base64Bytes = Base64.encodeBase64(buf);
+            passBase64 = new String(base64Bytes);
+ 
+        } catch (Exception ex) {
+        	
+        	
+        	
+        }
+        return passBase64;
+
 	}
 	
 }

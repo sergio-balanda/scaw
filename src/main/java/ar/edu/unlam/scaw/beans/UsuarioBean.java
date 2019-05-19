@@ -138,15 +138,20 @@ public class UsuarioBean implements Serializable {
 		String cambioDeTexto = request.getParameter("myForm:texto");
 		String passwordViejo = request.getParameter("myForm:password");
 		String passwordNuevo = request.getParameter("myForm:passwordNuevo");
-
-		error = usuarioService.usuarioModificaPasswordyTexto(cambioDeTexto, passwordViejo, passwordNuevo, intIdUsuario);
-
-		Usuario usuarioDb = usuarioService.buscarUsuarioPorId(intIdUsuario);
-		if (usuarioDb != null) {
-			String accion = "Usuario "+ usuarioDb.getEmail() + " realizo modificaciones.";
-			auditoriaService.registrarAuditoria(usuarioDb,accion);
+		
+		if(usuarioService.validarNoCaracteresEspeciales(cambioDeTexto)==true) {
+			error ="Campo texto no permitido";
 		}
-		return "home";
+		else {
+			error = usuarioService.usuarioModificaPasswordyTexto(cambioDeTexto, passwordViejo, passwordNuevo, intIdUsuario);
+		}
+			Usuario usuarioDb = usuarioService.buscarUsuarioPorId(intIdUsuario);
+			if (usuarioDb != null) {
+				String accion = "Usuario "+ usuarioDb.getEmail() + " realizo modificaciones.";
+				auditoriaService.registrarAuditoria(usuarioDb,accion);
+			}
+			return "home";
+		
 	}
 	
 	// Habilitar Deshabilitar
