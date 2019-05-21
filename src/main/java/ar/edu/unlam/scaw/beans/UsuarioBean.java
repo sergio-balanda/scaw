@@ -55,7 +55,6 @@ public class UsuarioBean implements Serializable {
 		if (usuario == null ||  usuarioService.validaUsuarioPassword(usuario)==false  ) {
 			String accion = "Usuario "+ email +" no encontrado al loguearse.";
 			auditoriaService.registrarAuditoria(usuario, accion);
-			usuarioService.numerosDeIntentosDeLogin(email);
 			error = "Usuario no encontrado";
 			return "index";
 		} else {
@@ -67,7 +66,6 @@ public class UsuarioBean implements Serializable {
 			auditoriaService.registrarAuditoria(usuario, accion);
 			return "home";
 		}
-		return "index";
 	}
 
 	// LOGOUT
