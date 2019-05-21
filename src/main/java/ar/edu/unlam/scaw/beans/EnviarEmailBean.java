@@ -11,6 +11,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import ar.edu.unlam.scaw.entities.Usuario;
+import ar.edu.unlam.scaw.services.AuditoriaService;
 import ar.edu.unlam.scaw.services.UsuarioService;
 
 @ManagedBean(name = "enviarEmailBean")
@@ -23,6 +25,7 @@ public class EnviarEmailBean implements Serializable {
 	// Spring Inject
 	ApplicationContext context = new ClassPathXmlApplicationContext(new String[] { "beans.xml" });
 	UsuarioService usuarioService = (UsuarioService) context.getBean("usuarioService");
+	AuditoriaService auditoriaService = (AuditoriaService) context.getBean("auditoriaService");
 
 	public String getEmail() {
 		return email;
@@ -45,6 +48,9 @@ public class EnviarEmailBean implements Serializable {
 		if(email!="") {
 			error = usuarioService.enviarEmail(email);
 		}else {
+			Usuario usuario = new Usuario();
+			String accion = "Error al enviar email de recuperacion para email"+email;
+			auditoriaService.registrarAuditoria(usuario, accion);
 			error="El campo email es obligatorio";
 		}
 	

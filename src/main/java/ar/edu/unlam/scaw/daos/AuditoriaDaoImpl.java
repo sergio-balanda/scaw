@@ -57,7 +57,7 @@ public class AuditoriaDaoImpl implements AuditoriaDao {
 		try {
 			this.HSQLDBMain();
 			ResultSet rs = statement.executeQuery(
-					"SELECT AUDITORIA.ID as idAuditoria, AUDITORIA.ACCION as auditoriaAccion, AUDITORIA.ACTUALIZADO as auditoriaActualizado, AUDITORIA.CREADO as auditoriaCreado, AUDITORIA.USUARIO as auditoriaUsuario, USUARIO.EMAIL as usuarioEmail FROM AUDITORIA INNER JOIN USUARIO ON USUARIO.ID = AUDITORIA.USUARIO");
+					"SELECT AUDITORIA.ID as idAuditoria, AUDITORIA.ACCION as auditoriaAccion, AUDITORIA.ACTUALIZADO as auditoriaActualizado, AUDITORIA.CREADO as auditoriaCreado, AUDITORIA.USUARIO as auditoriaUsuario, USUARIO.EMAIL as usuarioEmail FROM AUDITORIA INNER JOIN USUARIO ON USUARIO.ID = AUDITORIA.USUARIO ORDER BY ID");
 
 			while (rs.next()) {
 
@@ -91,15 +91,35 @@ public class AuditoriaDaoImpl implements AuditoriaDao {
 	public void registrarAuditoria(Auditoria auditoria) {
 		try {
 			this.HSQLDBMain();
-	        PreparedStatement ps = statement.getConnection()
-	        		.prepareStatement("INSERT INTO AUDITORIA (ACCION,CREADO,ACTUALIZADO,USUARIO) VALUES  (?,?,?,?)");
-	        ps.setString(1, auditoria.getAccion());
-	        ps.setString(2, auditoria.getCreado());
-	        ps.setString(3, auditoria.getActualizado());
-	        ps.setInt(4, auditoria.getIdUsuario());
-	        ps.executeUpdate();
-	        ps.close();
+		        PreparedStatement ps = statement.getConnection()
+		        		.prepareStatement("INSERT INTO AUDITORIA (ACCION,CREADO,ACTUALIZADO,USUARIO) VALUES  (?,?,?,?)");
+		        ps.setString(1, auditoria.getAccion());
+		        ps.setString(2, auditoria.getCreado());
+		        ps.setString(3, auditoria.getActualizado());
+		        ps.setInt(4, auditoria.getIdUsuario());
+		        ps.executeUpdate();
+		        ps.close();
 		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Override
+	public void registrarAuditoriaDeIntentosFallidos(Auditoria auditoria) {
+		try {
+			this.HSQLDBMain();
+		        PreparedStatement ps = statement.getConnection()
+		        		.prepareStatement("INSERT INTO AUDITORIA (ACCION,CREADO,ACTUALIZADO,USUARIO) VALUES  (?,?,?,NULL)");
+		        ps.setString(1, auditoria.getAccion());
+		        ps.setString(2, auditoria.getCreado());
+		        ps.setString(3, auditoria.getActualizado());
+		        ps.executeUpdate();
+		        ps.close();
+		} catch (SQLException e) {
+			System.out.println("///////////////////////////////////////");
+			System.out.println("");
+			System.out.println("error "+e.getErrorCode()+" "+e.getMessage()+" "+e.getLocalizedMessage()+" "+e.getSQLState()+" ");
+			System.out.println("///////////////////////////////////////");
 			e.printStackTrace();
 		}
 	}

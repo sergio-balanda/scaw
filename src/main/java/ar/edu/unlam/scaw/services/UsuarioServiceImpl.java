@@ -24,6 +24,7 @@ import javax.mail.internet.MimeMultipart;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import ar.edu.unlam.scaw.daos.AuditoriaDao;
 import ar.edu.unlam.scaw.daos.UsuarioDao;
 import ar.edu.unlam.scaw.daos.UsuarioDaoImpl;
 import ar.edu.unlam.scaw.entities.Usuario;
@@ -37,6 +38,9 @@ public class UsuarioServiceImpl implements UsuarioService {
 
 	@Autowired
 	UsuarioDao usuarioDao;
+	
+	@Autowired
+	AuditoriaService auditoriaService;
 	
 	@Override
 	public List<Usuario> getUsuarios() {
@@ -113,15 +117,23 @@ public class UsuarioServiceImpl implements UsuarioService {
 				usuarioDePassActual.setPassword(this.md5(passwordViejo));
 				if(usuario.getPassword().equals(usuarioDePassActual.getPassword())) {//si el pass actual es igual al pass de db
 					usuarioModificacion(id, usuario.getEmail(), texto, usuario.getEstado(), this.md5(passwordNuevo), usuario.getRol());
-					return "Campos modificados correctamente.";
+					String accion = "Campos modificados correctamente usuario "+usuario.getEmail();
+					auditoriaService.registrarAuditoria(usuario, accion);
+					return accion;
 				}else {//si los pass actual y db no son iguales
-					return "Campo password actual no coincide.";
+					String accion = "Error al modicar password actual no coincide usuario "+usuario.getEmail();
+					auditoriaService.registrarAuditoria(usuario, accion);
+					return "Error al modicar password actual no coincide.";
 				}
 			}else {//pass validacion false
+				String accion = "Error al modicar password nuevo no valido "+usuario.getEmail();
+				auditoriaService.registrarAuditoria(usuario, accion);
 				return "Campo password nuevo no valido.";
 			}
 		} 
 		usuarioModificacion(id, usuario.getEmail(), texto, usuario.getEstado(), usuario.getPassword(), usuario.getRol());
+		String accion = "Campos texto modificado usario "+usuario.getEmail();
+		auditoriaService.registrarAuditoria(usuario, accion);
 		return "Campo texto modificado con exito.";
 	}
 	
@@ -140,12 +152,14 @@ public class UsuarioServiceImpl implements UsuarioService {
 		try {
 			Usuario usuario = buscarUsuarioPorEmail(email);
 			if(usuario==null) {
+				String accion = "Error al enviar email usuario no encontrado";
+				auditoriaService.registrarAuditoria(usuario, accion);
 				return "Usuario no encontrado";
 			}
 			else {
 				// El correo gmail de envío
-				String correoEnvia = "***********";
-				String claveCorreo = "***********";;
+				String correoEnvia = "tp.tres.empanadas@gmail.com";
+				String claveCorreo = "programacionweb3";
 				// La configuración para enviar correo
 				Properties properties = new Properties();
 				properties.put("mail.smtp.host", "smtp.gmail.com");
@@ -190,6 +204,8 @@ public class UsuarioServiceImpl implements UsuarioService {
 					transport.connect(correoEnvia, claveCorreo);
 					transport.sendMessage(mimeMessage, mimeMessage.getAllRecipients());
 					transport.close();
+					String accion = "Se envio un email al usuario "+usuario.getEmail();
+					auditoriaService.registrarAuditoria(usuario, accion);
 					return "Se ha enviado un correo a su cuenta.";
 
 				} catch (Exception ex) {
@@ -267,5 +283,10 @@ public class UsuarioServiceImpl implements UsuarioService {
         return passBase64;
 
 	}
-	
+
+	@Override
+	public Usuario buscarUsuarioDeshabilitadoParaLasAuditorias() {
+		// TODO Auto-generated method stub
+		return usuarioDao.buscarUsuarioDeshabilitadoParaLasAuditorias();
+	}
 }

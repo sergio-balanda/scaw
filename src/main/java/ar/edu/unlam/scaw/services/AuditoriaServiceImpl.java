@@ -19,6 +19,9 @@ public class AuditoriaServiceImpl implements AuditoriaService {
 
 	@Autowired
 	AuditoriaDao auditoriaDao;
+	
+	@Autowired
+	UsuarioDao usuarioDao;
 
 	@Override
 	public String devolverPaginaDeAcuerdoAlRolDelUsuario(Integer intRol) {
@@ -60,12 +63,26 @@ public class AuditoriaServiceImpl implements AuditoriaService {
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		Date date = new Date();
 
+		if(usuario==null) {
+			usuario = usuarioDao.buscarUsuarioDeshabilitadoParaLasAuditorias();
+		}
+		
 		Auditoria auditoria = new Auditoria();
 		auditoria.setAccion(accion.toString());
 		auditoria.setCreado(dateFormat.format(date));
 		auditoria.setActualizado(dateFormat.format(date));
 		auditoria.setIdUsuario(usuario.getId());
+		auditoriaDao.registrarAuditoria(auditoria);
+	}
 
+	@Override
+	public void registrarAuditoriaDeIntentosFallidos(String accion) {
+		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+		Date date = new Date();
+		Auditoria auditoria = new Auditoria();
+		auditoria.setAccion(accion.toString());
+		auditoria.setCreado(dateFormat.format(date));
+		auditoria.setActualizado(dateFormat.format(date));
 		auditoriaDao.registrarAuditoria(auditoria);
 	}
 

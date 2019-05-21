@@ -56,7 +56,7 @@ public class UsuarioDaoImpl implements UsuarioDao {
 
 		try {
 			this.HSQLDBMain();
-			ResultSet rs = statement.executeQuery("SELECT * FROM USUARIO");
+			ResultSet rs = statement.executeQuery("SELECT * FROM USUARIO WHERE ID <> 1");
 			while (rs.next()) {
 				String email = rs.getString("email");
 				String password = rs.getString("password");
@@ -124,6 +124,39 @@ public class UsuarioDaoImpl implements UsuarioDao {
 		}
 		return usuario;
 	}
+	
+	@Override
+	public Usuario buscarUsuarioDeshabilitadoParaLasAuditorias() {
+		Usuario usuario = new Usuario();
+
+		try {
+			this.HSQLDBMain();
+			String sql = "SELECT * FROM USUARIO WHERE ID = 1";
+			PreparedStatement ps = statement.getConnection().prepareStatement(sql);
+			resultSet = ps.executeQuery();
+			while (resultSet.next()) {
+				String rsEmail = resultSet.getString("email");
+				String rsPassword = resultSet.getString("password");
+				Integer id = resultSet.getInt("id");
+				String texto = resultSet.getString("texto");
+				String estado = resultSet.getString("estado");
+				Integer rol = resultSet.getInt("rol");
+
+				usuario.setEmail(rsEmail);
+				usuario.setPassword(rsPassword);
+				usuario.setId(id);
+				usuario.setTexto(texto);
+				usuario.setEstado(estado);
+				usuario.setRol(rol);
+			}
+			resultSet.close();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return usuario;
+	}
+
 
 	@Override
 	public void usuarioModificacion(Integer id, String email, String texto, String estado, String password,

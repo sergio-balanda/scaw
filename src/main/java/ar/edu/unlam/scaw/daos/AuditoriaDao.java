@@ -9,5 +9,6 @@ public interface AuditoriaDao {
 	List<Auditoria> todasLasAuditorias();
 
 	void registrarAuditoria(Auditoria auditoria);
-
+	
+	void registrarAuditoriaDeIntentosFallidos(Auditoria auditoria);
 }

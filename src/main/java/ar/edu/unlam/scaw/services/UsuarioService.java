@@ -23,12 +23,14 @@ public interface UsuarioService {
 	String usuarioModificaPasswordyTexto(String texto, String password, String passwordNuevo,Integer id);
 	
 	String enviarEmail(String email);
-
+	
+	Usuario buscarUsuarioDeshabilitadoParaLasAuditorias();
+	
 	public boolean validaUsuarioEmail(Usuario usuario);
 	
 	public boolean validaUsuarioPassword(Usuario usuario);
 	
 	boolean validarNoCaracteresEspeciales(String texto);
 	
-	String md5(String password);
+	String md5(String password);	
 }

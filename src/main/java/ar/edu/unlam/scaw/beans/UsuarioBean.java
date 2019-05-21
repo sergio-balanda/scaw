@@ -53,6 +53,9 @@ public class UsuarioBean implements Serializable {
 	public String login() {
 		Usuario usuario = usuarioService.buscarUsuarioPorEmailyContraseña(this.email, this.password);
 		if (usuario == null ||  usuarioService.validaUsuarioPassword(usuario)==false  ) {
+			String accion = "Usuario "+ email +" no encontrado al loguearse.";
+			auditoriaService.registrarAuditoria(usuario, accion);
+			usuarioService.numerosDeIntentosDeLogin(email);
 			error = "Usuario no encontrado";
 			return "index";
 		} else {
@@ -64,6 +67,7 @@ public class UsuarioBean implements Serializable {
 			auditoriaService.registrarAuditoria(usuario, accion);
 			return "home";
 		}
+		return "index";
 	}
 
 	// LOGOUT
@@ -116,13 +120,17 @@ public class UsuarioBean implements Serializable {
 		if(usuarioService.validaUsuarioEmail(nuevoUsuario)==true && usuarioService.validaUsuarioPassword(nuevoUsuario)==true) {
 			error=null;
 			usuarioService.guardarUsuario(nuevoUsuario);
-			Usuario usuarioDb = usuarioService.buscarUsuarioPorEmailyContraseña(nuevoUsuario.getEmail(),
-					nuevoUsuario.getPassword());
+			Usuario usuarioDb = usuarioService.buscarUsuarioPorEmailyContraseña(nuevoUsuario.getEmail(), nuevoUsuario.getPassword());
 			if (usuarioDb != null) {
 				String accion = "Usuario "+ usuarioDb.getEmail() + " registrado.";
 				auditoriaService.registrarAuditoria(usuarioDb,accion);
 			}
 			return "index";
+		}
+		Usuario usuarioDb = usuarioService.buscarUsuarioPorEmailyContraseña(nuevoUsuario.getEmail(), nuevoUsuario.getPassword());
+		if(usuarioDb==null) {
+			String accion = "Error al registrar usuario "+email;
+			auditoriaService.registrarAuditoria(usuarioDb,accion);
 		}
 		error="Email o Contraseña no validos";
 		return "registro";
@@ -138,19 +146,18 @@ public class UsuarioBean implements Serializable {
 		String cambioDeTexto = request.getParameter("myForm:texto");
 		String passwordViejo = request.getParameter("myForm:password");
 		String passwordNuevo = request.getParameter("myForm:passwordNuevo");
-		
-		if(usuarioService.validarNoCaracteresEspeciales(cambioDeTexto)==true) {
-			error ="Campo texto no permitido";
-		}
-		else {
-			error = usuarioService.usuarioModificaPasswordyTexto(cambioDeTexto, passwordViejo, passwordNuevo, intIdUsuario);
-		}
-			Usuario usuarioDb = usuarioService.buscarUsuarioPorId(intIdUsuario);
-			if (usuarioDb != null) {
-				String accion = "Usuario "+ usuarioDb.getEmail() + " realizo modificaciones.";
+		Usuario usuarioDb = usuarioService.buscarUsuarioPorId(intIdUsuario);
+		if (usuarioDb != null) {
+			if(usuarioService.validarNoCaracteresEspeciales(cambioDeTexto)==true) {
+				String accion = "Usuario "+ usuarioDb.getEmail() + " error al modificar texto.";
 				auditoriaService.registrarAuditoria(usuarioDb,accion);
+				error ="Campo texto no permitido";
 			}
-			return "home";
+			else {
+				error = usuarioService.usuarioModificaPasswordyTexto(cambioDeTexto, passwordViejo, passwordNuevo, intIdUsuario);
+			}
+		}
+		return "home";
 		
 	}
 	
