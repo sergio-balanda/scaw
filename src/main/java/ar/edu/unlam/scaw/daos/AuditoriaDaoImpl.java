@@ -116,10 +116,6 @@ public class AuditoriaDaoImpl implements AuditoriaDao {
 		        ps.executeUpdate();
 		        ps.close();
 		} catch (SQLException e) {
-			System.out.println("///////////////////////////////////////");
-			System.out.println("");
-			System.out.println("error "+e.getErrorCode()+" "+e.getMessage()+" "+e.getLocalizedMessage()+" "+e.getSQLState()+" ");
-			System.out.println("///////////////////////////////////////");
 			e.printStackTrace();
 		}
 	}

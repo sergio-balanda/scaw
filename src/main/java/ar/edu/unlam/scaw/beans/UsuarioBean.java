@@ -3,17 +3,21 @@ package ar.edu.unlam.scaw.beans;
 import java.io.IOException;
 import java.io.Serializable;
 import java.nio.channels.SeekableByteChannel;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.enterprise.context.BusyConversationException;
 import javax.enterprise.context.RequestScoped;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.servlet.ServletContext;
+import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -22,8 +26,13 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import ar.edu.unlam.scaw.entities.Auditoria;
+import ar.edu.unlam.scaw.entities.Intento;
+import ar.edu.unlam.scaw.entities.Salt;
+import ar.edu.unlam.scaw.entities.TokenGenerator;
 import ar.edu.unlam.scaw.entities.Usuario;
+import ar.edu.unlam.scaw.entities.VerifyRecaptcha;
 import ar.edu.unlam.scaw.services.AuditoriaService;
+import ar.edu.unlam.scaw.services.IntentoService;
 import ar.edu.unlam.scaw.services.UsuarioService;
 
 @ManagedBean(name = "usuarioBean", eager = true)
@@ -38,35 +47,65 @@ public class UsuarioBean implements Serializable {
 	private String texto = null;
 	private String estado = null;
 	private Integer rol = null;
+	private String token = null;
+	private Date fecha_token = null;
 	private String error = null;
+	private String invalidar = null;
 	private List<Auditoria> auditorias;
 
 	// Spring Inject
 	ApplicationContext context = new ClassPathXmlApplicationContext(new String[] { "beans.xml" });
 	UsuarioService usuarioService = (UsuarioService) context.getBean("usuarioService");
 	AuditoriaService auditoriaService = (AuditoriaService) context.getBean("auditoriaService");
+	IntentoService intentoService = (IntentoService) context.getBean("intentoService");
+
 
 	private FacesContext contextSession = FacesContext.getCurrentInstance();
 	HttpSession session = (HttpSession) contextSession.getExternalContext().getSession(true);
 
 	// LOGIN
 	public String login() {
+		boolean captcha = recaptcha();
 		Usuario usuario = usuarioService.buscarUsuarioPorEmailyContraseña(this.email, this.password);
-		if (usuario == null ||  usuarioService.validaUsuarioPassword(usuario)==false  ) {
+		if (usuario == null ||  usuarioService.validaUsuarioPassword(usuario)==false  || captcha==false) {
 			String accion = "Usuario "+ email +" no encontrado al loguearse.";
 			auditoriaService.registrarAuditoria(usuario, accion);
 			error = "Usuario no encontrado";
+			
+			intentoService.guardarIntentoDeLogin(email);
+			invalidar = intentoService.deshabilitarUsuarioPorIntentosFallidos(email);
 			return "index";
 		} else {
-			error = null;
-			session.setAttribute("email", usuario.getEmail());
-			session.setAttribute("rol", usuario.getRol());
-			session.setAttribute("id", usuario.getId());
-			String accion = "Usuario "+usuario.getEmail()+" Logueado.";
-			auditoriaService.registrarAuditoria(usuario, accion);
-			return "home";
+				error = null;
+				invalidar= null;
+				session.setAttribute("email", usuario.getEmail());
+				session.setAttribute("rol", usuario.getRol());
+				session.setAttribute("id", usuario.getId());
+				String accion = "Usuario "+usuario.getEmail()+" Logueado.";
+				auditoriaService.registrarAuditoria(usuario, accion);
+				return "home";
 		}
 	}
+	
+
+	//recaptcha
+    public Boolean recaptcha(){
+    	boolean recaptcha=false;
+        try {
+       String gRecaptchaResponse = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap()
+    		   .get("g-recaptcha-response");
+       boolean verify = VerifyRecaptcha.verify(gRecaptchaResponse);
+       if(verify){
+    	   return verify;
+       }else{
+            FacesContext context = FacesContext.getCurrentInstance();
+            context.addMessage( null, new FacesMessage( "Seleccione una opcion") );
+            return verify;
+         }
+        } catch (Exception e) {
+        	return  recaptcha;
+        }
+    }  
 
 	// LOGOUT
 	public void logout() {
@@ -111,18 +150,22 @@ public class UsuarioBean implements Serializable {
 
 	// guarda usuarios con rol usuario
 	public String guardarUsuario() {
+		error="";
 		Usuario nuevoUsuario = new Usuario();
 		nuevoUsuario.setPassword(password);
 		nuevoUsuario.setEmail(email);
+		TokenGenerator miToken =  new TokenGenerator();
+		nuevoUsuario.setToken(miToken.generateToken());
 		
-		if(usuarioService.validaUsuarioEmail(nuevoUsuario)==true && usuarioService.validaUsuarioPassword(nuevoUsuario)==true) {
+		if(usuarioService.validaUsuarioEmail(nuevoUsuario)==true && usuarioService.validaUsuarioPassword(nuevoUsuario)==true && usuarioService.contraseñasComunes(nuevoUsuario)==true) {
 			error=null;
-			usuarioService.guardarUsuario(nuevoUsuario);
+			usuarioService.guardarUsuario(nuevoUsuario);//se guarda usuairo
 			Usuario usuarioDb = usuarioService.buscarUsuarioPorEmailyContraseña(nuevoUsuario.getEmail(), nuevoUsuario.getPassword());
 			if (usuarioDb != null) {
 				String accion = "Usuario "+ usuarioDb.getEmail() + " registrado.";
 				auditoriaService.registrarAuditoria(usuarioDb,accion);
 			}
+			error="Se envio un correo a su cuenta.";
 			return "index";
 		}
 		Usuario usuarioDb = usuarioService.buscarUsuarioPorEmailyContraseña(nuevoUsuario.getEmail(), nuevoUsuario.getPassword());
@@ -178,6 +221,45 @@ public class UsuarioBean implements Serializable {
 
 	}
 	
+	public String habilitarRegistro() {
+		error="";
+		boolean captcha = recaptcha();
+		if(captcha==false) {
+			error="Error Captcha incorrecto.";
+			return "habilitar-usuario";
+		}
+		
+		FacesContext fc = FacesContext.getCurrentInstance();
+		Map<String,String> params = fc.getExternalContext().getRequestParameterMap();
+		String data =  params.get("token"); 
+	      
+		if(data=="" || data ==null) {
+			return "index";
+		}
+
+	    error = usuarioService.habilitarUsuarioPorToken(data, email);
+		return "index";
+	}
+	
+	public String recuperar() {
+		error="";
+		boolean captcha = recaptcha();
+		if(captcha==false) {
+			error="Error Captcha incorrecto.";
+			return "recuperar";
+		}
+		FacesContext fc = FacesContext.getCurrentInstance();
+		Map<String,String> params = fc.getExternalContext().getRequestParameterMap();
+		String data =  params.get("token"); 
+		Usuario usuario = new Usuario();
+		usuario.setEmail(email);
+		usuario.setPassword(password);
+		usuario.setToken(data);
+		error = usuarioService.recuperarPassword(data, usuario);
+		
+		return "recuperar";		
+	}
+	
 	//Sessions
 	public void verificarSesion() throws IOException {
 		if (FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("email") == null) {
@@ -207,6 +289,8 @@ public class UsuarioBean implements Serializable {
 		this.texto = null;
 		this.estado = null;
 		this.rol = null;
+		this.token = null;
+		this.fecha_token = null;
 	}
 
 	public Usuario UsuarioBean() {
@@ -218,6 +302,8 @@ public class UsuarioBean implements Serializable {
 		usuario.setTexto(this.texto);
 		usuario.setEstado(this.estado);
 		usuario.setRol(this.rol);
+		usuario.setToken(this.token);
+		usuario.setFecha_token(this.fecha_token);
 		return usuario;
 	}
 
@@ -292,6 +378,30 @@ public class UsuarioBean implements Serializable {
 
 	public void setPasswordNuevo(String passwordNuevo) {
 		this.passwordNuevo = passwordNuevo;
+	}
+
+	public String getInvalidar() {
+		return invalidar;
+	}
+
+	public void setInvalidar(String invalidar) {
+		this.invalidar = invalidar;
+	}
+
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
+	}
+
+	public Date getFecha_token() {
+		return fecha_token;
+	}
+
+	public void setFecha_token(Date fecha_token) {
+		this.fecha_token = fecha_token;
 	}
 	
 }

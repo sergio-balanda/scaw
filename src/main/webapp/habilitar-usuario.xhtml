@@ -8,9 +8,10 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:a="http://xmlns.jcp.org/jsf/passthrough">
 <h:head>
-	<link rel="stylesheet" href="css/bootstrap.min.css"></link>
-	<script src="https://www.google.com/recaptcha/api.js" async="async" defer="defer"></script>
-	<title>Enviar correo</title>
+	<title>Tp</title>
+	<ui:include src="partials/head.xhtml"></ui:include>
+	<script src="https://www.google.com/recaptcha/api.js" async="async"
+		defer="defer"></script>
 </h:head>
 
 <h:body class="bg-light">
@@ -19,25 +20,34 @@
 			<div class="col-md-4 offset-md-4">
 				<div class="card shadow-sm p-3 mb-5 bg-white rounded">
 					<div class="card-body">
-						<h1 class="card-title">Enviar correo</h1>
+						<h2 class="card-title">Habilitar usuario</h2>
 						<hr></hr>
 						<h:form>
 							<div class="form-group">
-								<h:outputText value = "#{enviarEmailBean.error}" class="text-danger"/>
+								<h:outputText value="#{usuarioBean.error}" class="text-danger" />
 							</div>
 							<div class="form-group">
-								<h:inputText value="#{enviarEmailBean.email}" a:placeholder="Email"
-									class="form-control" required="true" onfocus="true">
+								<h:outputLabel for="email" value="Ingrese su email: " />
+								<h:inputText value="#{usuarioBean.email}" a:placeholder="Email"
+									class="form-control" required="true" onfocus="true" id="email">
 								</h:inputText>
 							</div>
+
+							<input type="hidden" name="token" value="#{param.token}" />
 							<div class="form-group">
       							<div class="g-recaptcha" data-sitekey="UPDATE SITE KEY HERE"></div>
       						</div>
 							<div class="form-group">
-								<h:commandButton action="#{enviarEmailBean.send()}"
-									value="Enviar" class="btn btn-block btn-primary"></h:commandButton>
+								<h:commandButton action="#{usuarioBean.habilitarRegistro}"
+									value="Habilitar" class="btn btn-block btn-primary">
+								</h:commandButton>
 							</div>
 						</h:form>
+	
+						<div class="form-group">
+							<a class="btn btn-block btn-danger" href="/scaw">volver a la
+								página principal</a>
+						</div>
 					</div>
 				</div>
 			</div>

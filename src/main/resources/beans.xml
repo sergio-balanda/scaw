@@ -25,6 +25,11 @@
 	<bean id="auditoriaService"
 		class="ar.edu.unlam.scaw.services.AuditoriaServiceImpl"></bean>
 		
+	<bean id="intentoDao"
+		class="ar.edu.unlam.scaw.daos.IntentoDaoImpl"></bean>
+	<bean id="intentoService"
+		class="ar.edu.unlam.scaw.services.IntentoServiceImpl"></bean>	
+		
 <!-- 	<bean id="mailService" -->
 <!-- 		class="ar.edu.unlam.scaw.services.MailService"></bean> -->
 

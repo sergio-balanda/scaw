@@ -10,6 +10,7 @@
 <h:head>
 	<title>Tp</title>
 	<ui:include src="partials/head.xhtml"></ui:include>
+	 <script src="https://www.google.com/recaptcha/api.js" async="async" defer="defer"></script>
 </h:head>
 
 <h:body class="bg-light">
@@ -25,6 +26,9 @@
 								<h:outputText value = "#{usuarioBean.error}" class="text-danger"/>
 							</div>
 							<div class="form-group">
+								<h:outputText value = "#{usuarioBean.invalidar}" class="text-danger"/>
+							</div>
+							<div class="form-group">
 								<h:outputLabel for="email" value="Email: "/>
 								<h:inputText value="#{usuarioBean.email}" a:placeholder="Email"
 									class="form-control" required="true" requiredMessage="Email requerido">
@@ -35,8 +39,10 @@
 								<h:outputLabel for="password" value="Password "/>
 								<h:inputSecret value="#{usuarioBean.password}"
 									a:placeholder="Password" class="form-control" requiredMessage="Password requerido"></h:inputSecret>
-
 							</div>
+      						<div class="form-group">
+      							<div class="g-recaptcha" data-sitekey="UPDATE SITE KEY HERE"></div>
+      						</div>
 							<div class="form-group">
 								<h:commandButton action="#{usuarioBean.login}"
 									value="Login" class="btn btn-block btn-primary"></h:commandButton>

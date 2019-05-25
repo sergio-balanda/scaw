@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:a="http://xmlns.jcp.org/jsf/passthrough">
+<h:head>
+	<link rel="stylesheet" href="css/bootstrap.min.css"></link>
+	<script src="https://www.google.com/recaptcha/api.js" async="async" defer="defer"></script>
+	<title>Recuperar</title>
+</h:head>
+
+<h:body class="bg-light">
+	<div class="container mt-5">
+		<div class="row">
+			<div class="col-md-6 offset-md-3">
+				<div class="card shadow-sm p-3 mb-5 bg-white rounded">
+					<div class="card-body">
+						<h1 class="card-title">Recuperar contraseña</h1>
+						<hr></hr>
+						<h:form>
+							<div class="form-group">
+								<h:outputText value="#{usuarioBean.error}" class="text-danger" />
+							</div>
+							<div class="form-group">
+								<h:inputText value="#{usuarioBean.email}" a:placeholder="Email"
+									class="form-control" required="true" onfocus="true" id="email">
+								</h:inputText>
+							</div>
+
+							<div class="form-group">
+								<h:inputSecret value="#{usuarioBean.password}"
+									a:placeholder="Password" class="form-control" id="password"
+									required="true"
+									onkeyup="muestra_seguridad_clave(this.value, this.form);show(this.value)"></h:inputSecret>
+								<input type="checkbox" onclick="Toggle()" /> Ver password <input
+									type="hidden" id="myText" class="form-control"
+									readonly="readonly"></input>
+							</div>
+							<div class="form-group">
+								<span class="text-muted">Seguridad: </span> <input
+									name="seguridad" type="text"
+									style="border: 0px; background-color: ffffff; text-decoration: italic;"
+									onfocus="blur()" class="text-success" />
+							</div>
+							<input type="hidden" name="token" value="#{param.token}" />
+							<div class="form-group">
+      							<div class="g-recaptcha" data-sitekey="UPDATE SITE KEY HERE"></div>
+      						</div>
+							<div class="form-group">
+								<h:commandButton action="#{usuarioBean.recuperar()}" value="Enviar"
+									class="btn btn-block btn-primary"></h:commandButton>
+
+							</div>
+						</h:form>
+						<a href="/scaw" class="btn btn-danger btn-block">Volver</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script src="./js/medidor.js"></script>
+	<script src="./js/mostrar-ocultar.js"></script>
+</h:body>
+</html>
