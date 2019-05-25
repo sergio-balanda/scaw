@@ -91,7 +91,13 @@ public class UsuarioDaoImpl implements UsuarioDao {
 	public void guardarUsuario(Usuario usuario) {
 		try {
 			this.HSQLDBMain();
-			statement.executeUpdate("INSERT INTO USUARIO (EMAIL,PASSWORD,TEXTO,ESTADO,ROL,TOKEN,FECHA_TOKEN) VALUES ('"+usuario.getEmail()+"', '"+usuario.getPassword()+"','','deshabilitado', 2, '"+usuario.getToken()+"', NOW())");
+			//statement.executeUpdate("INSERT INTO USUARIO (EMAIL,PASSWORD,TEXTO,ESTADO,ROL,TOKEN,FECHA_TOKEN) VALUES ('"+usuario.getEmail()+"', '"+usuario.getPassword()+"','','deshabilitado', 2, '"+usuario.getToken()+"', NOW())");
+			PreparedStatement ps = statement.getConnection().prepareStatement("INSERT INTO USUARIO (EMAIL,PASSWORD,TEXTO,ESTADO,ROL,TOKEN,FECHA_TOKEN) VALUES (?, ?,'','deshabilitado', 2, ?, NOW())");
+	        ps.setString(1, usuario.getEmail());
+	        ps.setString(2, usuario.getPassword());
+	        ps.setString(3, usuario.getToken());
+	        ps.executeUpdate();
+	        ps.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -231,9 +237,14 @@ public class UsuarioDaoImpl implements UsuarioDao {
 	}
 	
 	public void guardarSaltDeUsuario(Salt salt) {
+		System.out.println("dao "+salt.getUsuario());
 		try {
 			this.HSQLDBMain();
-			statement.executeUpdate(" INSERT INTO SALT (SALT,USUARIO) VALUES ('"+salt.getSalt()+"', '"+salt.getUsuario()+"')");
+			PreparedStatement ps = statement.getConnection().prepareStatement("INSERT INTO SALT (SALT,USUARIO) VALUES (?, ?)");
+	        ps.setString(1, salt.getSalt());
+	        ps.setInt(2, salt.getUsuario());
+	        ps.executeUpdate();
+	        ps.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

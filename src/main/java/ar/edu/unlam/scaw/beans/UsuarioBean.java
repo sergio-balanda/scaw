@@ -105,7 +105,7 @@ public class UsuarioBean implements Serializable {
         } catch (Exception e) {
         	return  recaptcha;
         }
-    }  
+    }   
 
 	// LOGOUT
 	public void logout() {

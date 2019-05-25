@@ -84,7 +84,6 @@ public class UsuarioServiceImpl implements UsuarioService {
 			usuarioDao.guardarSaltDeUsuario(salt);
 		}
 		this.enviarEmail(usuario.getEmail(), "Ingrese a la siguiente direccion para habilitar usuario: "+getUrl()+"/habilitar-usuario.xhtml?token="+usuario.getToken());//se envia email
-
 	}
 
 	@Override
@@ -109,8 +108,9 @@ public class UsuarioServiceImpl implements UsuarioService {
 	@Override
 	public Usuario buscarUsuarioPorEmailyContraseña(String email, String password) {
 		try {
-			Usuario usuario = buscarUsuarioPorEmail(email);
-			//Usuario usuario = usuarioDao.buscarUsuarioPorEmailyContraseña(email, this.md5(password));
+			Usuario usuarioPorEmail = buscarUsuarioPorEmail(email);
+			Salt saltUsuario = buscarSaltDeUsuario(usuarioPorEmail.getId());
+			Usuario usuario = usuarioDao.buscarUsuarioPorEmailyContraseña(email, this.md5(password,saltUsuario.getSalt()));
 			Usuario usuarioEquals = new Usuario();
 			usuarioEquals.setEstado("habilitado");
 			if (usuario.getId() !=null && usuarioEquals.getEstado().equals(usuario.getEstado())) {
@@ -132,7 +132,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 		if(usuario==null || salt==null) {
 			return "Usuario no encontrado.";
 		}
-		
+		System.out.println("salt ////////////"+salt.getSalt()+" id= "+salt.getId());
 		if (passwordNuevo != "") {//si el password no es nulo
 			Usuario usuarioValidaPass = new Usuario();
 			usuarioValidaPass.setPassword(passwordNuevo);
@@ -141,9 +141,9 @@ public class UsuarioServiceImpl implements UsuarioService {
 				usuarioDePassActual.setPassword(this.md5(passwordViejo,salt.getSalt()));
 				if(usuario.getPassword().equals(usuarioDePassActual.getPassword())) {//si el pass actual es igual al pass de db
 					usuarioModificacion(id, usuario.getEmail(), texto, usuario.getEstado(), this.md5(passwordNuevo,salt.getSalt()), usuario.getRol());
-					String accion = "Campos modificados correctamente usuario "+usuario.getEmail();
+					String accion = "Usuario modifico sus datos correctamente usuario "+usuario.getEmail();
 					auditoriaService.registrarAuditoria(usuario, accion);
-					return accion;
+					return "Usuario modifico sus datos correctamente usuario";
 				}else {//si los pass actual y db no son iguales
 					String accion = "Error al modicar password actual no coincide usuario "+usuario.getEmail();
 					auditoriaService.registrarAuditoria(usuario, accion);
@@ -182,8 +182,8 @@ public class UsuarioServiceImpl implements UsuarioService {
 			}
 			else {
 				// El correo gmail de envío
-				String correoEnvia = "****************";
-				String claveCorreo = "****************";
+				String correoEnvia = "*********************";
+				String claveCorreo = "*********************";
 				// La configuración para enviar correo
 				Properties properties = new Properties();
 				properties.put("mail.smtp.host", "smtp.gmail.com");
@@ -498,4 +498,5 @@ public class UsuarioServiceImpl implements UsuarioService {
 	public Salt buscarSaltDeUsuario(Integer id) {
 		return usuarioDao.buscarSaltDeUsuario(id);
 	}
+
 }
