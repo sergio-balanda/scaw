@@ -30,7 +30,7 @@ public class UsuarioDaoImpl implements UsuarioDao {
 	public boolean HSQLDBMain() {
 		try {
 			HsqlProperties hsqlProperties = new HsqlProperties();
-			hsqlProperties.setProperty("server.database.0", "file:/Java/projects/seguridad/db/scaw");
+			hsqlProperties.setProperty("server.database.0", "file:/Java/projects/scaw/db/scaw");
 			hsqlProperties.setProperty("server.dbname.0", "mdb");
 
 			Server server = new Server();
